@@ -1,0 +1,31 @@
+version: "2"
+services:
+  postgres:
+    build: ./db
+    environment:
+      POSTGRES_PASSWORD: ""
+      POSTGRES_USER: postgres
+
+  rabbitmq:
+    environment:
+      RABBITMQ_DEFAULT_PASS: claire
+      RABBITMQ_DEFAULT_USER: claire
+    image: "rabbitmq:3.6.10"
+
+  redis:
+    environment:
+      REDIS_DEFAULT_PASS: claire
+      REDIS_DEFAULT_USER: claire
+    image: "redis:alpine"
+
+  service:
+    container_name: clairvoyance_service_chat
+    build: .
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - "8080:3000"
+    volumes:
+      - "./:/app"
+    entrypoint: ["tail", "-f", "/dev/null"]
